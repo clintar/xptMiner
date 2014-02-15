@@ -8,7 +8,7 @@ CFLAGS = -Wall -Wextra -O2 -fomit-frame-pointer -ffast-math -flto
 
 
 OSVERSION := $(shell uname -s)
-LIBS = -lcrypto -lssl -pthread -lgmp -lgmpxx -lmpir
+LIBS = -lcrypto -lssl -pthread -lgmp -lgmpxx
 
 ifeq ($(OSVERSION),Linux)
 	LIBS += -lrt
@@ -75,7 +75,7 @@ xptMiner/%.o: xptMiner/%.c
 	$(CC) -c $(CFLAGS) $(INCLUDEPATHS) $< -o $@ 
 
 xptminer$(EXTENSION): $(OBJS:xptMiner/%=xptMiner/%) $(JHLIB:xptMiner/jhlib/%=xptMiner/jhlib/%)
-	$(CXX) $(CFLAGS) $(LIBPATHS) $(INCLUDEPATHS)  -o $@ $^ $(LIBS) -flto
+	$(CXX) $(CFLAGS) $(LIBPATHS) $(INCLUDEPATHS) -static -o $@ $^ $(LIBS) -flto
 
 clean:
 	-rm -f xptminer
