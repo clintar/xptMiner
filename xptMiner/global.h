@@ -29,6 +29,8 @@ typedef unsigned __int64 uint64_t;
 #else
 #include <gmpxx.h>
 #include <gmp.h>
+//#include"mpir/mpir.h"
+
 // Windows-isms for compatibility in Linux
 #define RtlZeroMemory(Destination,Length) std::memset((Destination),0,(Length))
 #define RtlCopyMemory(Destination,Source,Length) std::memcpy((Destination),(Source),(Length))

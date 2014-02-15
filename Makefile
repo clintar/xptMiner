@@ -1,14 +1,14 @@
 CXX = g++
 CC = cc
-CXXFLAGS = -Wall -Wextra -std=c++0x -O2 -fomit-frame-pointer
+CXXFLAGS = -Wall -Wextra -std=c++0x -O2 -fomit-frame-pointer -ffast-math -flto
 
-CFLAGS = -Wall -Wextra -O2 -fomit-frame-pointer
+CFLAGS = -Wall -Wextra -O2 -fomit-frame-pointer -ffast-math -flto
 # add these for more speed! (if your cpu can do them)
 #-msse2 -msse3 -mssse3 -msse4a -msse2avx -msse4a -msse4.1 -msse4.2 -mavx 
 
 
 OSVERSION := $(shell uname -s)
-LIBS = -lcrypto -lssl -pthread -lgmp -lgmpxx
+LIBS = -lcrypto -lssl -pthread -lgmp -lgmpxx -lmpir
 
 ifeq ($(OSVERSION),Linux)
 	LIBS += -lrt
@@ -24,7 +24,7 @@ ifeq ($(OSVERSION),FreeBSD)
 endif
 
 # You might need to edit these paths too
-LIBPATHS = -L/usr/local/lib -L/usr/lib
+LIBPATHS = -L/usr/local/lib -L/usr/lib -L/DBA/openssl/1.0.1f/lib/
 INCLUDEPATHS = -I/usr/local/include -I/usr/include -IxptMiner/includes/ -IxptMiner/OpenCL
 
 ifeq ($(OSVERSION),Darwin)
@@ -75,7 +75,7 @@ xptMiner/%.o: xptMiner/%.c
 	$(CC) -c $(CFLAGS) $(INCLUDEPATHS) $< -o $@ 
 
 xptminer$(EXTENSION): $(OBJS:xptMiner/%=xptMiner/%) $(JHLIB:xptMiner/jhlib/%=xptMiner/jhlib/%)
-	$(CXX) $(CFLAGS) $(LIBPATHS) $(INCLUDEPATHS) -o $@ $^ $(LIBS) -flto
+	$(CXX) $(CFLAGS) $(LIBPATHS) $(INCLUDEPATHS) -static -o $@ $^ $(LIBS) -flto
 
 clean:
 	-rm -f xptminer

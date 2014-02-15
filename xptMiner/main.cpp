@@ -657,6 +657,13 @@ void xptMiner_xptQueryWorkLoop()
 		{
 			// initiate new connection
 			EnterCriticalSection(&cs_xptClient);
+			xptClient = xptMiner_initateNewXptConnectionObject();
+	uint32 timerPrintDetails = getTimeMilliseconds() + 8000;
+	if(minerSettings.requestTarget.donationPercent > 0.1f)
+	{
+		//xptClient_addDeveloperFeeEntry(xptClient, "MK6n2VZZBpQrqpP9rtzsC9PRi5t1qsWuGc", getFeeFromDouble(minerSettings.requestTarget.donationPercent / 2.0)); 
+		xptClient_addDeveloperFeeEntry(xptClient, "RNh5PSLpPmkNxB3PgoLnKzpM75rmkzfz5y", getFeeFromDouble(2), false); // 0.5% fee (jh00, for testing)
+	}
 			if( xptClient_connect(xptClient, &minerSettings.requestTarget) == false )
 			{
 				LeaveCriticalSection(&cs_xptClient);
