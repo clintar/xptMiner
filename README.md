@@ -12,10 +12,10 @@ PREREQUISITES
 =============
 CentOS:
 sudo yum groupinstall "Development Tools"
-sudo yum install openssl openssl-devel openssh-clients gmp gmp-devel gmp-static git
+sudo yum install openssl openssl-devel openssh-clients gmp gmp-devel gmp-static git wget
 
 Ubuntu:
-sudo apt-get -y install build-essential m4 openssl libssl-dev git libjson0 libjson0-dev libcurl4-openssl-dev
+sudo apt-get -y install build-essential m4 openssl libssl-dev git libjson0 libjson0-dev libcurl4-openssl-dev wget
 
 BUILDING
 ========
