@@ -81,6 +81,14 @@ typedef struct sockaddr SOCKADDR;
 #  error "Cannot define thread_local"
 # endif
 #endif
+#if defined(_MSC_VER)
+#define _ALIGNED(x) __declspec(align(x))
+#else
+#if defined(__GNUC__)
+#define _ALIGNED(x) __attribute__ ((aligned(x)))
+#endif
+#endif
+#define _ALIGNED_TYPE(t,x) typedef t _ALIGNED(x)
 
 #include<stdio.h>
 #include<time.h>

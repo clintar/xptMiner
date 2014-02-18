@@ -18,8 +18,15 @@ void metiscoin_process(minerMetiscoinBlock_t* block)
 	static unsigned char	 pblank[1];
 	block->nonce = 0;
 	uint32 target = *(uint32*)(block->targetShare+28);
+	#ifdef _WIN32
+	__declspec(align(32)) uint64 hash0[4];
 	__declspec(align(32)) unsigned int metisPartData[36*GROUPED_HASHES];
 	__declspec(align(32)) uint64 hash0[8*GROUPED_HASHES];
+#else
+	__attribute__((aligned(32))) unsigned int metisPartData[36*GROUPED_HASHES];
+	__attribute__((aligned(32))) uint64 hash0[8*GROUPED_HASHES];
+#endif
+	
 	// since only the nonce changes we can calculate the first keccak round in advance
 	unsigned long long keccakPre[25];
 	sph_keccak512_init(&ctx_keccak);
@@ -47,7 +54,7 @@ void metiscoin_process(minerMetiscoinBlock_t* block)
 			}
 			for(uint32 i=0; i<GROUPED_HASHES; i++)
 			{
-				shavite_big_core_opt(hash0+i*8, hash0+i*8);
+				shavite_big_core_opt((long long *)hash0+i*8, (long long *)hash0+i*8);
 			}
 			block->nonce = n*0x10000+f;
 			//for(uint32 i=0; i<GROUPED_HASHES; i++)

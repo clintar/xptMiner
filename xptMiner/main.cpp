@@ -260,10 +260,13 @@ void xptMiner_submitShare(minerRiecoinBlock_t* block, uint8* nOffset)
 
 #ifdef _WIN32
 int xptMiner_minerThread(int threadIndex)
+{
 #else
 void *xptMiner_minerThread(void *arg)
-#endif
 {
+	int threadIndex = (intptr_t)arg;
+#endif
+
 	// local work data
 	union
 	{
@@ -440,9 +443,13 @@ void *xptMiner_minerThread(void *arg)
 		}
 		else if( workDataSource.algorithm == ALGORITHM_MAXCOIN )
 		{
+#ifdef USE_OPENCL
 			if( minerSettings.useGPU && threadIndex == 0 )
+			{
 				maxcoin_processGPU(&minerMaxcoinBlock);
+			}
 			else
+#endif
 				maxcoin_process(&minerMaxcoinBlock);
 		}
 		else if( workDataSource.algorithm == ALGORITHM_RIECOIN )
@@ -715,8 +722,8 @@ void xptMiner_printHelp()
 	puts("   -m<amount>                    Defines how many megabytes of memory are used per thread.");
 	puts("                                 Default is 256mb, allowed constants are:");
 	puts("                                 -m512 -m256 -m128 -m32 -m8");
-	//puts("MaxCoin specific:");
-	//puts("   -gpu						   Use OpenCL GPU acceleration");
+	puts("MaxCoin specific:");
+	puts("   -gpu						   Use OpenCL GPU acceleration");
 	puts("Example usage:");
 	puts("   xptMiner.exe -o http://poolurl.com:10034 -u workername.pts_1 -p workerpass -t 4");
 }

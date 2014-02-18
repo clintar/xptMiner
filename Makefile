@@ -58,13 +58,19 @@ OBJS = \
 	xptMiner/xptServer.o \
 	xptMiner/xptServerPacketHandler.o \
 	xptMiner/transaction.o \
-	xptMiner/maxcoinMiner.o \
 	xptMiner/riecoinMiner.o \
-	xptMiner/metiscoinMiner.o \
-	xptMiner/OpenCLObjects.o \
-	xptMiner/openCL.o 
-#	xptMiner/maxcoinMinerCL.o \
-#	xptMiner/keccak.o \
+	xptMiner/metiscoinMiner.o 
+
+ifeq ($(ENABLE_OPENCL),1)
+	OBJS += xptMiner/OpenCLObjects.o 
+        OBJS += xptMiner/openCL.o
+	OBJS += xptMiner/maxcoinMinerCL.o 
+	CXXFLAGS += -DUSE_OPENCL
+	LIBS += -lOpenCL
+else
+	OBJS + xptMiner/maxcoinMiner.o 
+
+endif
 
 all: xptminer$(EXTENSION)
 
