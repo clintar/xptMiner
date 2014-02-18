@@ -1,14 +1,14 @@
 CXX = g++
 CC = cc
-CXXFLAGS = -Wall -Wextra -std=c++0x -O2 -fomit-frame-pointer -ffast-math -flto
+CXXFLAGS = -Wall -Wextra -std=c++0x -O2 -fomit-frame-pointer -ffast-math 
 
-CFLAGS = -Wall -Wextra -O2 -fomit-frame-pointer -ffast-math -flto
+CFLAGS = -Wall -Wextra -O2 -fomit-frame-pointer -ffast-math 
 # add these for more speed! (if your cpu can do them)
 #-msse2 -msse3 -mssse3 -msse4a -msse2avx -msse4a -msse4.1 -msse4.2 -mavx 
 
 
 OSVERSION := $(shell uname -s)
-LIBS = -lcrypto -lssl -pthread -lgmp -lgmpxx
+LIBS = -lcrypto -lssl -pthread -lgmp -lgmpxx  -ldl 
 
 ifeq ($(OSVERSION),Linux)
 	LIBS += -lrt
@@ -60,10 +60,10 @@ OBJS = \
 	xptMiner/transaction.o \
 	xptMiner/maxcoinMiner.o \
 	xptMiner/riecoinMiner.o \
-	xptMiner/metiscoinMiner.o 
+	xptMiner/metiscoinMiner.o \
+	xptMiner/OpenCLObjects.o \
+	xptMiner/openCL.o 
 #	xptMiner/maxcoinMinerCL.o \
-#	xptMiner/OpenCLObjects.o \
-#	xptMiner/openCL.o \
 #	xptMiner/keccak.o \
 
 all: xptminer$(EXTENSION)
