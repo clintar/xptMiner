@@ -68,7 +68,7 @@ ifeq ($(ENABLE_OPENCL),1)
 	CXXFLAGS += -DUSE_OPENCL
 	LIBS += -lOpenCL
 else
-	OBJS + xptMiner/maxcoinMiner.o 
+	OBJS += xptMiner/maxcoinMiner.o 
 
 endif
 
