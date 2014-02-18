@@ -1790,6 +1790,27 @@ void keccak_core_opt(sph_keccak512_context *kc, unsigned long long* keccakPre, u
 	unsigned long long t;
 
 	buf = kc->buf;
+	
+	//w1 &= ~0xFFFFFFFFULL;
+
+	//if( (w1>>32) == 0 )
+	//{
+	//	unsigned char* emptyData = (unsigned char*)malloc(sizeof(unsigned char)*25);
+	//	keccakPre = (unsigned long long*)emptyData;
+	//	memset(keccakPre, 0x00, sizeof(unsigned long long)*25);
+	//}
+	//else if( (w1>>32) == 1 )
+	//{
+	//	//memset(keccakPre, 0x00, sizeof(unsigned long long)*25);
+	//	w1 &= 0xFFFFFFFFULL;
+	//}
+	//else if( (w1>>32) == 2 )
+	//{
+	//	//memset(keccakPre, 0x00, sizeof(unsigned long long)*25);
+	//	w1 &= 0xFFFFFFFFULL;
+	//	w1 |= 0x100000000ULL;
+	//}
+
 	//READ_STATE(kc);
 	a00 = keccakPre[ 0]; 
 	a10 = keccakPre[ 1]; 

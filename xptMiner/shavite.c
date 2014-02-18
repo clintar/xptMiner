@@ -96,6 +96,7 @@ static const sph_u32 IV512[] = {
 		AES_ROUND_NOKEY_LE(t0, t1, t2, t3, x0, x1, x2, x3); \
 	} while (0)
 
+
 /*
  * This is the code needed to match the "reference implementation" as
  * published on Nov 23rd, 2009, instead of the published specification.
@@ -1748,7 +1749,7 @@ void
 sph_shavite512_close(void *cc, void *dst)
 {
 	shavite_big_close(cc, 0, 0, dst, 16);
-//	shavite_big_init(cc, IV512);
+	// shavite_big_init(cc, IV512);
 }
 
 /* see sph_shavite.h */

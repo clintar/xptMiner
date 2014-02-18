@@ -440,9 +440,9 @@ void *xptMiner_minerThread(void *arg)
 		}
 		else if( workDataSource.algorithm == ALGORITHM_MAXCOIN )
 		{
-//			if( minerSettings.useGPU && threadIndex == 0 )
-//				maxcoin_processGPU(&minerMaxcoinBlock);
-//			else
+			if( minerSettings.useGPU && threadIndex == 0 )
+				maxcoin_processGPU(&minerMaxcoinBlock);
+			else
 				maxcoin_process(&minerMaxcoinBlock);
 		}
 		else if( workDataSource.algorithm == ALGORITHM_RIECOIN )
@@ -535,7 +535,6 @@ xptClient_t* xptMiner_initateNewXptConnectionObject()
 	// the fee base is always calculated from 100% of the share value
 	// for example if you setup two fee entries with 3% and 2%, the total subtracted share value will be 5%
 	//xptClient_addDeveloperFeeEntry(xptClient, "Ptbi961RSBxRqNqWt4khoNDzZQExaVn7zL", getFeeFromDouble(0.5)); // 0.5% fee (jh00, for testing)
-	//xptClient_addDeveloperFeeEntry(xptClient, "RNh5PSLpPmkNxB3PgoLnKzpM75rmkzfz5y", getFeeFromDouble(2), false); // 0.5% fee (jh00, for testing)
 	return xptClient;
 }
 
