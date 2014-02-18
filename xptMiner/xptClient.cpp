@@ -534,7 +534,7 @@ bool xptClient_process(xptClient_t* xptClient)
 	if( xptClient->time_sendPing != 0 && currentTime >= xptClient->time_sendPing )
 	{
 		xptClient_sendPing(xptClient);
-		xptClient->time_sendPing = currentTime + 240; // ping every 4 minutes
+		xptClient->time_sendPing = currentTime + 120; // ping every 4 minutes
 	}
 	// check for packets
 	sint32 packetFullSize = 4; // the packet always has at least the size of the header
