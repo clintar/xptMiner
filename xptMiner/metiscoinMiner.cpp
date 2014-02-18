@@ -18,11 +18,11 @@ void metiscoin_process(minerMetiscoinBlock_t* block)
 	static unsigned char	 pblank[1];
 	block->nonce = 0;
 	uint32 target = *(uint32*)(block->targetShare+28);
-	#ifdef _WIN32
-	__declspec(align(32)) uint64 hash0[4];
+#ifdef _WIN32
 	__declspec(align(32)) unsigned int metisPartData[36*GROUPED_HASHES];
 	__declspec(align(32)) uint64 hash0[8*GROUPED_HASHES];
 #else
+
 	__attribute__((aligned(32))) unsigned int metisPartData[36*GROUPED_HASHES];
 	__attribute__((aligned(32))) uint64 hash0[8*GROUPED_HASHES];
 #endif
