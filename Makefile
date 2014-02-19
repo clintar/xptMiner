@@ -1,15 +1,23 @@
+INT_LIB=mpir
 CXX = g++
 CC = cc
-CXXFLAGS = -Wall -Wextra -std=c++0x -O2 -fomit-frame-pointer -ffast-math 
+CXXFLAGS = -Wall -Wextra -std=c++0x -O2 -fomit-frame-pointer -ffast-math -msse2 -msse3 -msse4a
 
-CFLAGS = -Wall -Wextra -O2 -fomit-frame-pointer -ffast-math 
+CFLAGS = -Wall -Wextra -O2 -fomit-frame-pointer -ffast-math -msse2 -msse3 -msse4a
 # add these for more speed! (if your cpu can do them)
 #-msse2 -msse3 -mssse3 -msse4a -msse2avx -msse4a -msse4.1 -msse4.2 -mavx 
 
 
 OSVERSION := $(shell uname -s)
-LIBS = -lcrypto -lssl -pthread -lgmp -lgmpxx  -ldl 
-
+LIBS = -lcrypto -lssl -pthread  -ldl 
+ifeq ($(INT_LIB),mpir)
+       MPIR_DEF=-DUSE_MPIR
+       CFLAGS +=$(MPIR_DEF)
+       CXXFLAGS +=$(MPIR_DEF)
+       LIBS+=-lmpir
+else
+       LIBS+=-lgmp -lgmpxx
+endif
 ifeq ($(OSVERSION),Linux)
 	LIBS += -lrt
 	CFLAGS += -march=native 
@@ -81,7 +89,7 @@ xptMiner/%.o: xptMiner/%.c
 	$(CC) -c $(CFLAGS) $(INCLUDEPATHS) $< -o $@ 
 
 xptminer$(EXTENSION): $(OBJS:xptMiner/%=xptMiner/%) $(JHLIB:xptMiner/jhlib/%=xptMiner/jhlib/%)
-	$(CXX) $(CFLAGS) $(LIBPATHS) $(INCLUDEPATHS) -o $@ $^ $(LIBS) -flto
+	$(CXX) $(CFLAGS) $(LIBPATHS) $(INCLUDEPATHS) $(STATIC) -o $@ $^ $(LIBS) -flto
 
 clean:
 	-rm -f xptminer
