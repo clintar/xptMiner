@@ -1,11 +1,10 @@
-INT_LIB=mpir
+# use this after installing mpir http://www.mpir.org/ to see if you get better performance than using gmp
+#INT_LIB=mpir
 CXX = g++
 CC = cc
-CXXFLAGS = -Wall -Wextra -std=c++0x -O2 -fomit-frame-pointer -ffast-math -msse2 -msse3 -msse4a
+CXXFLAGS = -Wall -Wextra -std=c++0x -O2 -fomit-frame-pointer 
 
-CFLAGS = -Wall -Wextra -O2 -fomit-frame-pointer -ffast-math -msse2 -msse3 -msse4a
-# add these for more speed! (if your cpu can do them)
-#-msse2 -msse3 -mssse3 -msse4a -msse2avx -msse4a -msse4.1 -msse4.2 -mavx 
+CFLAGS = -Wall -Wextra -O2 -fomit-frame-pointer 
 
 
 OSVERSION := $(shell uname -s)
