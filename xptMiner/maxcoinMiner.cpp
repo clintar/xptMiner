@@ -13,7 +13,7 @@ struct
 	// kernel
 	cl_kernel kernel_keccak;
 }maxcoinGPU;
-#ifdef USE_OPECL
+#ifdef USE_OPENCL
 void maxcoinMiner_openCL_appendKeccakFunction(char* kernel_src)
 {
 	// static arrays
@@ -324,7 +324,7 @@ void maxcoinMiner_openCL_generateOrUpdateKernel()
 #endif
 void maxcoin_init()
 {
-#ifdef USE_OPECL
+#ifdef USE_OPENCL
 	if( minerSettings.useGPU )
 	{
 		openCL_init();
@@ -357,7 +357,7 @@ void xptMiner_submitShare_test(minerMaxcoinBlock_t* block)
 		totalRejectedShareCount++;
 	}
 }
-#ifdef USE_OPECL
+#ifdef USE_OPENCL
 void maxcoin_processGPU(minerMaxcoinBlock_t* block)
 {
 	//memset(block, 0x00, 80); // debug
@@ -402,11 +402,7 @@ void maxcoin_processGPU(minerMaxcoinBlock_t* block)
 void maxcoin_process(minerMaxcoinBlock_t* block)
 {
 	//memset(block, 0x00, 80); // debug
-#ifdef	_WIN32
-	__declspec(align(32)) uint64 hash0[4];
-#else
-	__attribute__((aligned(32))) uint64 hash0[4];
-#endif
+	_ALIGNED(32) uint64 hash0[4];
 	// endian swap block data (input data needs to be big endian)
 	//uint32 blockDataBE[80/4];
 	uint32* blockInputData = (uint32*)block;

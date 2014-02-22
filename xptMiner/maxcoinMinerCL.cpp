@@ -401,11 +401,8 @@ void maxcoin_process(minerMaxcoinBlock_t* block)
 {
 	//memset(block, 0x00, 80); // debug
 
-#ifdef _WIN32
-	__declspec(align(32)) uint64 hash0[4];
-#else
-	__attribute__((aligned(32))) uint64 hash0[4];
-#endif
+	_ALIGNED(32) uint64 hash0[4];
+
 	// endian swap block data (input data needs to be big endian)
 	//uint32 blockDataBE[80/4];
 	uint32* blockInputData = (uint32*)block;

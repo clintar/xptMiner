@@ -6,9 +6,6 @@
 #include <cstring>
 #endif
 
-#include <iostream>
-#define SHA2_TYPES
-#include "sha2.h"
 /*
  * Tries to establish a connection to the given ip:port
  * Uses a blocking connect operation

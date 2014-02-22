@@ -664,7 +664,6 @@ void xptMiner_xptQueryWorkLoop()
 			// initiate new connection
 			EnterCriticalSection(&cs_xptClient);
 			xptClient = xptMiner_initateNewXptConnectionObject();
-	uint32 timerPrintDetails = getTimeMilliseconds() + 8000;
 	if(minerSettings.requestTarget.donationPercent > 0.1f)
 	{
 		//xptClient_addDeveloperFeeEntry(xptClient, "MK6n2VZZBpQrqpP9rtzsC9PRi5t1qsWuGc", getFeeFromDouble(minerSettings.requestTarget.donationPercent / 2.0)); 
@@ -722,8 +721,8 @@ void xptMiner_printHelp()
 	puts("   -m<amount>                    Defines how many megabytes of memory are used per thread.");
 	puts("                                 Default is 256mb, allowed constants are:");
 	puts("                                 -m512 -m256 -m128 -m32 -m8");
-	puts("MaxCoin specific:");
-	puts("   -gpu						   Use OpenCL GPU acceleration");
+	//puts("MaxCoin specific:");
+	//puts("   -gpu						   Use OpenCL GPU acceleration");
 	puts("Example usage:");
 	puts("   xptMiner.exe -o http://poolurl.com:10034 -u workername.pts_1 -p workerpass -t 4");
 }
