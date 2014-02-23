@@ -1,10 +1,30 @@
-
+#include <algorithm>
+#include <string.h>
+#include <cstring>
 #ifdef _WIN32
 #define NOMINMAX
 #pragma comment(lib,"Ws2_32.lib")
 #include<Winsock2.h>
 #include<ws2tcpip.h>
 #include"mpir/mpir.h"
+
+typedef __int64           sint64;
+typedef unsigned __int64  uint64;
+typedef __int32           sint32;
+typedef unsigned __int32  uint32;
+typedef __int16           sint16;
+typedef unsigned __int16  uint16;
+//typedef __int8            sint8;
+//typedef unsigned __int8   uint8;
+
+//typedef __int8 int8_t;
+typedef unsigned __int8 uint8_t;
+typedef __int16 int16_t;
+typedef unsigned __int16 uint16_t;
+typedef __int32 int32_t;
+typedef unsigned __int32 uint32_t;
+typedef __int64 int64_t;
+typedef unsigned __int64 uint64_t;
 
 #else
 
@@ -15,6 +35,8 @@
 #include <mpirxx.h>
 #include <mpir.h>
 #endif
+
+//#include"mpir/mpir.h"
 
 // Windows-isms for compatibility in Linux
 #define RtlZeroMemory(Destination,Length) std::memset((Destination),0,(Length))
@@ -81,6 +103,7 @@ typedef struct sockaddr SOCKADDR;
 #include<set>
 
 #include <iomanip>
+#include"sha2.h"
 
 #include"jhlib.h" // slim version of jh library
 
@@ -239,7 +262,7 @@ typedef struct
 
 #include"scrypt.h"
 #include"algorithm.h"
-
+#include"openCL.h"
 
 void xptMiner_submitShare(minerProtosharesBlock_t* block);
 void xptMiner_submitShare(minerScryptBlock_t* block);
