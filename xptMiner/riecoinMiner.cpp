@@ -288,6 +288,7 @@ void riecoin_process(minerRiecoinBlock_t* block)
 #endif
 #endif
 		totalShareCount++;
-		xptMiner_submitShare(block, nOffset);
+		xptMiner_submitShare(block, nOffset);	
 	}
+	mpz_clears(z_target, z_temp, z_temp2, z_ft_r, z_ft_b, z_ft_n, NULL);
 }
