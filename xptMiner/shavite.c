@@ -1817,8 +1817,10 @@ sph_shavite512_addbits_and_close(void *cc, unsigned ub, unsigned n, void *dst)
 	^ AES2[((t1) >> 16) & 0xFF] \
 	^ AES3[((t2) >> 24)];
 
-void shavite_big_core_opt(unsigned long long * msg, unsigned long long * dataOut)
+void shavite_big_core_opt(unsigned long long * amsg, unsigned long long * adataOut)
 {
+	unsigned int *msg = (unsigned int *)amsg;
+	unsigned int *dataOut = (unsigned int *)adataOut;
 	sph_u32 kt;
 	sph_u32 p0, p1, p2, p3, p4, p5, p6, p7;
 	sph_u32 p8, p9, pA, pB, pC, pD, pE, pF;

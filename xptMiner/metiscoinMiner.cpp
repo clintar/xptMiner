@@ -49,7 +49,7 @@ void metiscoin_process(minerMetiscoinBlock_t* block)
 			}
 			for(uint32 i=0; i<GROUPED_HASHES; i++)
 			{
-				shavite_big_core_opt((unsigned long long int *)hash0+i*8, (unsigned long long int *)hash0+i*8);
+				shavite_big_core_opt(hash0+i*8, hash0+i*8);
 			}
 			block->nonce = n*0x10000+f;
 			//for(uint32 i=0; i<GROUPED_HASHES; i++)
