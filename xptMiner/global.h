@@ -47,7 +47,7 @@ typedef unsigned __int64 uint64_t;
 #define strcpy_s(dest,val,src) strncopy(dest,src,val)
 #define __debugbreak(); raise(SIGTRAP);
 #define CRITICAL_SECTION pthread_mutex_t
-#define EnterCriticalSection(Section) pthread_mutex_unlock(Section)
+#define EnterCriticalSection(Section) pthread_mutex_lock(Section)
 #define LeaveCriticalSection(Section) pthread_mutex_unlock(Section)
 #define InitializeCriticalSection(Section) pthread_mutex_init(Section, NULL)
 

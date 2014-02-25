@@ -663,6 +663,7 @@ void xptMiner_xptQueryWorkLoop()
 		{
 			// initiate new connection
 			EnterCriticalSection(&cs_xptClient);
+			xptClient_free(xptClient);
 			xptClient = xptMiner_initateNewXptConnectionObject();
 	if(minerSettings.requestTarget.donationPercent > 0.1f)
 	{
