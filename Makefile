@@ -2,9 +2,9 @@
 #INT_LIB=mpir
 CXX = g++
 CC = cc
-CXXFLAGS = -Wall -Wextra -std=c++0x -O2 -fomit-frame-pointer 
+CXXFLAGS = -Wall -Wextra -std=c++0x -O2 -fomit-frame-pointer $(EXTRA_CXXFLAGS)
 
-CFLAGS = -Wall -Wextra -O2 -fomit-frame-pointer 
+CFLAGS = -Wall -Wextra -O2 -fomit-frame-pointer $(EXTRA_CFLAGS)
 
 
 OSVERSION := $(shell uname -s)
