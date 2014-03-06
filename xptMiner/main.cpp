@@ -908,7 +908,7 @@ sysctl(mib, 2, &numcpu, &len, NULL, 0);
 	printf("Using %d CPU threads\n", commandlineInput.numThreads);
 	if( commandlineInput.useGPU )
 		printf("Using GPU if possible\n");
-	printf("Using %d threads\n", commandlineInput.numThreads);
+
 	
 	printf("\nFee Percentage:  %.2f%%. To set, use \"-d\" flag e.g. \"-d 2.5\" is 2.5%% donation\n\n", commandlineInput.donationPercent);
 #ifdef _WIN32
