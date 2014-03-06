@@ -2,6 +2,8 @@
 #include "ticker.h"
 #include <signal.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <cstring>
 #define MAX_TRANSACTIONS	(4096)
 

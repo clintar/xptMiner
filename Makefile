@@ -3,6 +3,11 @@
 CXX = g++
 CC = cc
 CXXFLAGS = -Wall -Wextra -std=c++0x -O2 -fomit-frame-pointer $(EXTRA_CXXFLAGS)
+ifeq ($(OSVERSION),CYGWIN_NT-6.1)
+	#CXXFLAGS = -Wall -Wextra -std=gnu++0x -O2 -fomit-frame-pointer 
+	CXXFLAGS = -std=gnu++0x -O2 -fomit-frame-pointer -D_BSD_SOURCE $(EXTRA_CFLAGS)
+	CFLAGS = -std=gnu++0x -O2 -fomit-frame-pointer -D_BSD_SOURCE $(EXTRA_CFLAGS)
+endif
 
 CFLAGS = -Wall -Wextra -O2 -fomit-frame-pointer $(EXTRA_CFLAGS)
 
@@ -45,7 +50,12 @@ else
        EXTENSION =
 
 endif
-
+ifeq ($(OSVERSION),CYGWIN_NT-6.1)
+	EXTENSION = .exe
+#	LIBS += -lOpenCL
+	LIBPATHS += -L/cygdrive/c/Program\ Files\ \(x86\)/AMD\ APP\ SDK/2.9/lib/x86_64/
+	INCLUDEPATHS += -I/cygdrive/c/Program\ Files\ \(x86\)/AMD\ APP\ SDK/2.9/include
+endif
 JHLIB = xptMiner/jhlib.o \
 
 OBJS = \
@@ -66,7 +76,8 @@ OBJS = \
 	xptMiner/xptServerPacketHandler.o \
 	xptMiner/transaction.o \
 	xptMiner/riecoinMiner.o \
-	xptMiner/metiscoinMiner.o 
+	xptMiner/metiscoinMiner.o \
+	xptMiner/win.o
 
 ifeq ($(ENABLE_OPENCL),1)
 	OBJS += xptMiner/OpenCLObjects.o 
