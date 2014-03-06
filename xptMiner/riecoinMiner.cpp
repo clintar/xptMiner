@@ -3,9 +3,13 @@
 #define zeroesBeforeHashInPrime	8
 
 const uint32 riecoin_primeTestLimit = 50000;
+const uint32 riecoin_primeTestLimit2 = 80000;
 uint32 riecoin_primorialSizeSkip = 35;
 uint32* riecoin_primeTestTable;
+uint32* riecoin_primeTestTable2;
 uint32 riecoin_primeTestSize;
+uint32 riecoin_primeTestSize2;
+
 
 uint32 riecoin_sieveSize = 1024*1024*1; // must be divisible by 8
 mpz_t  z_skipPrimorial;
@@ -36,7 +40,31 @@ void riecoin_init()
 	}
 	riecoin_primeTestTable = (uint32*)realloc(riecoin_primeTestTable, sizeof(uint32)*riecoin_primeTestSize);
 	free(vfComposite);
-	printf("Table with %d entries generated\n", riecoin_primeTestSize);
+	
+	// generate prime table
+	riecoin_primeTestTable2 = (uint32*)malloc(sizeof(uint32)*(riecoin_primeTestLimit2/4+10));
+	riecoin_primeTestSize2 = 0;
+	// generate prime table using Sieve of Eratosthenes
+	vfComposite = (uint8*)malloc(sizeof(uint8)*(riecoin_primeTestLimit2+7)/8);
+	memset(vfComposite, 0x00, sizeof(uint8)*(riecoin_primeTestLimit2+7)/8);
+	for (unsigned int nFactor = 2; nFactor * nFactor < riecoin_primeTestLimit2; nFactor++)
+	{
+		if( vfComposite[nFactor>>3] & (1<<(nFactor&7)) )
+			continue;
+		for (unsigned int nComposite = nFactor * nFactor; nComposite < riecoin_primeTestLimit2; nComposite += nFactor)
+			vfComposite[nComposite>>3] |= 1<<(nComposite&7);
+	}
+	for (unsigned int n = 2; n < riecoin_primeTestLimit2; n++)
+	{
+		if ( (vfComposite[n>>3] & (1<<(n&7)))==0 )
+		{
+			riecoin_primeTestTable2[riecoin_primeTestSize2] = n;
+			riecoin_primeTestSize2++;
+		}
+	}
+	riecoin_primeTestTable2 = (uint32*)realloc(riecoin_primeTestTable2, sizeof(uint32)*riecoin_primeTestSize2);
+	free(vfComposite);
+	printf("Table with %d entries generated\n", riecoin_primeTestSize + riecoin_primeTestSize2);
 	// make sure sieve size is divisible by 8
 	riecoin_sieveSize = (riecoin_sieveSize&~7);
 	// generate primorial for 40
@@ -44,6 +72,11 @@ void riecoin_init()
 	for(uint32 i=1; i<riecoin_primorialSizeSkip; i++)
 	{
 		mpz_mul_ui(z_skipPrimorial, z_skipPrimorial, riecoin_primeTestTable[i]);
+	}
+	mpz_init_set_ui(z_skipPrimorial, riecoin_primeTestTable2[0]);
+	for(uint32 i=1; i<riecoin_primorialSizeSkip; i++)
+	{
+		mpz_mul_ui(z_skipPrimorial, z_skipPrimorial, riecoin_primeTestTable2[i]);
 	}
 }
 
@@ -197,9 +230,10 @@ void riecoin_process(minerRiecoinBlock_t* block)
 	mpz_init(z_ft_n);
 
 	static uint32 primeTupleBias[6] = {0,4,6,10,12,16};
-	for(uint32 i=5; i<riecoin_primeTestSize; i++)
+	uint32 f=0;
+	for(uint32 i=5; i<riecoin_primeTestSize ; i++)
 	{
-		for(uint32 f=0; f<6; f++)
+		for(f=0; f<4; f++)
 		{
 			uint32 p = riecoin_primeTestTable[i];
 			uint32 remainder = mpz_tdiv_ui(z_temp, p);//;
@@ -217,9 +251,30 @@ void riecoin_process(minerRiecoinBlock_t* block)
 				index += p;
 			}
 		}
+		 
+	}
+	for(uint32 i=5; i<riecoin_primeTestSize2; i++)
+	{
+		for(uint32 f=4; f<6; f++)
+		{
+			uint32 p = riecoin_primeTestTable2[i];
+			uint32 remainder = mpz_tdiv_ui(z_temp, p);//;
+			remainder += primeTupleBias[f];
+			remainder %= p;
+			uint32 index;
+			// a+b*x=0 (mod p) => b*x=p-a => x = (p-a)*modinv(b)
+			sint32 pa = (p<remainder)?(p-remainder+p):(p-remainder);
+			sint32 b = 2310;
+			index = (pa%p)*int_invert(b, p);
+			index %= p;
+			while(index < riecoin_sieveSize)
+			{
+				sieve[(index)>>3] |= (1<<((index)&7));
+				index += p;
+			}
+		}
 		
 	}
-
 	uint32 countCandidates = 0;
 	uint32 countPrimes = 0;
 	uint32 countPrimes2 = 0;
