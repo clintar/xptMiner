@@ -56,6 +56,7 @@ bool QueryPerformanceCounter(_LARGE_INTEGER *performance_count)
 
     return true;
 }
+#ifdef __CYGWIN__
 char *strdup(const char *str)
 {
     int n = strlen(str) + 1;
@@ -66,3 +67,4 @@ char *strdup(const char *str)
     }
     return dup;
 }
+#endif

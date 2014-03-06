@@ -115,7 +115,9 @@ typedef union _LARGE_INTEGER {
   } u;
   int64_t QuadPart;
 } LARGE_INTEGER, *PLARGE_INTEGER;
+#ifdef __CYGWIN__
 char *strdup(const char *str);
+#endif
 bool QueryPerformanceFrequency(_LARGE_INTEGER *frequency);
 bool QueryPerformanceCounter(_LARGE_INTEGER *performance_count);
 
