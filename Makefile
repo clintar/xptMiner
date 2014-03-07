@@ -23,6 +23,7 @@ else
        LIBS+=-lgmp -lgmpxx
 endif
 ifeq ($(OSVERSION),Linux)
+	LIBS += -lrt
 	CFLAGS += -march=native 
 	CXXFLAGS += -march=native
 endif
