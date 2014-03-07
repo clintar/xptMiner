@@ -8,23 +8,11 @@
 
 
 #if defined(_WIN32) && !defined(__CYGWIN__)
-#pragma comment(lib,"Ws2_32.lib")
-#include<Winsock2.h>
-#include<ws2tcpip.h>
-#elif defined(__CYGWIN__)
-#include"win.h" // port from windows
-#include"mpir/mpir.h"
-#else
-#include"win.h" // port from windows
-#endif
-
-#if defined(_WIN32) && !defined(__CYGWIN__)
 #define NOMINMAX
 #pragma comment(lib,"Ws2_32.lib")
-#include<Winsock2.h>
+#include<winsock2.h>
 #include<ws2tcpip.h>
 #include"mpir/mpir.h"
-
 typedef __int64           sint64;
 typedef unsigned __int64  uint64;
 typedef __int32           sint32;
@@ -43,7 +31,16 @@ typedef unsigned __int32 uint32_t;
 typedef __int64 int64_t;
 typedef unsigned __int64 uint64_t;
 
-#elif !defined(__CYGWIN__)
+#if defined(__MINGW32__)
+#define Sleep(x) usleep(x*1000)
+#include<unistd.h>
+#endif
+
+#elif defined(__CYGWIN__)
+#include"win.h" // port from windows
+#include"mpir/mpir.h"
+#else
+#include"win.h" // port from windows
 
 #ifndef USE_MPIR
 #include <gmpxx.h>
@@ -52,9 +49,6 @@ typedef unsigned __int64 uint64_t;
 #include <mpirxx.h>
 #include <mpir.h>
 #endif
-
-
-
 #endif
 
 #ifndef thread_local
