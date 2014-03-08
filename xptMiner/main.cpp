@@ -469,6 +469,7 @@ void *xptMiner_minerThread(void *arg)
 
 uint8 algorithmInited[32] = {0};
 
+riecoinOptions_t riecoinOptions;
 /*
  * Reads data from the xpt connection state and writes it to the universal workDataSource struct
  */
@@ -489,7 +490,7 @@ void xptMiner_getWorkFromXPTConnection(xptClient_t* xptClient)
 		}
 		else if( xptClient->algorithm == ALGORITHM_RIECOIN && algorithmInited[xptClient->algorithm] == 0 )
 		{
-			riecoin_init();
+			riecoin_init(&riecoinOptions);
 			algorithmInited[xptClient->algorithm] = 1;
 		}
 	}
@@ -555,7 +556,7 @@ void xptMiner_xptQueryWorkLoop()
 	if(minerSettings.requestTarget.donationPercent > 0.1f)
 	{
 		//xptClient_addDeveloperFeeEntry(xptClient, "MK6n2VZZBpQrqpP9rtzsC9PRi5t1qsWuGc", getFeeFromDouble(minerSettings.requestTarget.donationPercent / 2.0)); 
-		xptClient_addDeveloperFeeEntry(xptClient, "RNh5PSLpPmkNxB3PgoLnKzpM75rmkzfz5y", getFeeFromDouble(2), false); // 0.5% fee (jh00, for testing)
+		xptClient_addDeveloperFeeEntry(xptClient, "RNh5PSLpPmkNxB3PgoLnKzpM75rmkzfz5y", getFeeFromDouble(minerSettings.requestTarget.donationPercent), false); // 0.5% fee (jh00, for testing)
 	}
 	while( true )
 	{
@@ -670,7 +671,7 @@ void xptMiner_xptQueryWorkLoop()
 	if(minerSettings.requestTarget.donationPercent > 0.1f)
 	{
 		//xptClient_addDeveloperFeeEntry(xptClient, "MK6n2VZZBpQrqpP9rtzsC9PRi5t1qsWuGc", getFeeFromDouble(minerSettings.requestTarget.donationPercent / 2.0)); 
-		xptClient_addDeveloperFeeEntry(xptClient, "RNh5PSLpPmkNxB3PgoLnKzpM75rmkzfz5y", getFeeFromDouble(2), false); // 0.5% fee (jh00, for testing)
+		xptClient_addDeveloperFeeEntry(xptClient, "RNh5PSLpPmkNxB3PgoLnKzpM75rmkzfz5y", getFeeFromDouble(minerSettings.requestTarget.donationPercent), false); // 0.5% fee (jh00, for testing)
 	}
 			if( xptClient_connect(xptClient, &minerSettings.requestTarget) == false )
 			{
@@ -820,7 +821,58 @@ void xptMiner_parseCommandline(int argc, char **argv)
 		{
 			commandlineInput.useGPU = true;
 		}
-
+		else if( memcmp(argument, "-ri", 3)==0 )
+		{
+			// -t
+			if( cIdx >= argc )
+			{
+				printf("Missing thread number after -t option\n");
+				exit(0);
+			}
+			riecoinOptions.ricPrimeTestsInitial = atoi(argv[cIdx]);
+			if( riecoinOptions.ricPrimeTestsInitial < 50000 || riecoinOptions.ricPrimeTestsInitial > 500000 )
+			{
+				printf("-ri parameter out of range. Must be between 50000 and 500000");
+				exit(0);
+			}
+			cIdx++;
+		}
+		else if( memcmp(argument, "-ru", 3)==0 )
+		{
+			// -t
+			if( cIdx >= argc )
+			{
+				printf("Missing thread number after -t option\n");
+				exit(0);
+			}
+			riecoinOptions.ricPrimeTestsUpper = atoi(argv[cIdx]);
+			if( riecoinOptions.ricPrimeTestsUpper < 50000 || riecoinOptions.ricPrimeTestsUpper > 500000 )
+			{
+				printf("-ru parameter out of range. Must be between 50000 and 500000");
+				exit(0);
+			}
+			cIdx++;
+		}
+		else if( memcmp(argument, "-rs", 3)==0 )
+		{
+			// -t
+			if( cIdx >= argc )
+			{
+				printf("Missing thread number after -t option\n");
+				exit(0);
+			}
+			riecoinOptions.ricUpperSteps = atoi(argv[cIdx]);
+			if( riecoinOptions.ricUpperSteps < 1 || riecoinOptions.ricUpperSteps > 4 )
+			{
+				printf("-t parameter out of range");
+				exit(0);
+			}
+			cIdx++;
+		}
+		else if( memcmp(argument, "-rm", 3)==0 )
+		{
+			riecoinOptions.ricStepMethod = true;
+		}
 		else if( memcmp(argument, "-d", 3)==0 )
 		{
 			if( cIdx >= argc )
@@ -896,6 +948,10 @@ sysctl(mib, 2, &numcpu, &len, NULL, 0);
 
 	commandlineInput.numThreads = numcpu;
 	commandlineInput.numThreads = std::min(std::max(commandlineInput.numThreads, 1), 4);
+	riecoinOptions.ricPrimeTestsInitial = 50000;
+	riecoinOptions.ricPrimeTestsUpper = 120000;
+	riecoinOptions.ricStepMethod = false;
+	riecoinOptions.ricUpperSteps = 3;
 	xptMiner_parseCommandline(argc, argv);
 	minerSettings.protoshareMemoryMode = commandlineInput.ptsMemoryMode;
 	minerSettings.useGPU = commandlineInput.useGPU;

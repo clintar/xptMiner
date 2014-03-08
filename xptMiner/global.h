@@ -241,6 +241,14 @@ typedef struct
 	uint32  shareTargetCompact;
 }minerRiecoinBlock_t;
 
+typedef struct
+{
+	uint32 ricPrimeTestsInitial;
+	uint32 ricPrimeTestsUpper;
+	uint32 ricUpperSteps;
+	bool ricStepMethod;
+}riecoinOptions_t;
+
 #include"scrypt.h"
 #include"algorithm.h"
 #include"openCL.h"
