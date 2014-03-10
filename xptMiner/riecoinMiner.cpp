@@ -44,10 +44,10 @@ void riecoin_init(riecoinOptions_t *ropts)
 		if ( (vfComposite[n>>3] & (1<<(n&7)))==0 )
 		{
 			riecoin_primeTestTable[riecoin_primeTestSize] = n;
-			riecoin_primeTestSize++;
+			riecoin_primeTestSizeUpper;
 			if(n<riecoin_primeTestLimitLower)
 			{
-				riecoin_primeTestSizeUpper++;
+				riecoin_primeTestSize++;
 			}
 		}
 	}
@@ -241,7 +241,7 @@ void riecoin_process(minerRiecoinBlock_t* block)
 	if (riecoin_stepMethod)
 	{
 		f = 6 - upperSteps;
-		for(uint32 i=5; i<riecoin_primeTestSize && i < (riecoin_primeTestSize + (f-upperSteps) * upperLimitStepping); i++)
+		for(uint32 i=5; i<riecoin_primeTestSizeUpper && i < (riecoin_primeTestSize + (f-upperSteps) * upperLimitStepping); i++)
 		{
 			for(f=upperSteps; f<6; f++)
 			{
