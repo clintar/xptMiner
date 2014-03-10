@@ -951,7 +951,7 @@ sysctl(mib, 2, &numcpu, &len, NULL, 0);
 	riecoinOptions.ricPrimeTestsInitial = 50000;
 	riecoinOptions.ricPrimeTestsUpper = 80000;
 	riecoinOptions.ricStepMethod = true;
-	riecoinOptions.ricUpperSteps = 3;
+	riecoinOptions.ricUpperSteps = 2;
 	xptMiner_parseCommandline(argc, argv);
 	minerSettings.protoshareMemoryMode = commandlineInput.ptsMemoryMode;
 	minerSettings.useGPU = commandlineInput.useGPU;
