@@ -24,8 +24,7 @@ void riecoin_init(riecoinOptions_t *ropts)
 	riecoin_primeTestLimitLower = ropts->ricPrimeTestsInitial;
 	upperSteps = ropts->ricUpperSteps;
 	riecoin_stepMethod = ropts->ricStepMethod;
-
-	printf("Generating table of small primes for Riecoin...\n");
+        printf("Generating table of small primes for Riecoin...\n");
 	// generate prime table
 	riecoin_primeTestTable = (uint32*)malloc(sizeof(uint32)*(riecoin_primeTestLimitUpper/4+10));
 	riecoin_primeTestSize = 0;
@@ -43,7 +42,7 @@ void riecoin_init(riecoinOptions_t *ropts)
 	{
 		if ( (vfComposite[n>>3] & (1<<(n&7)))==0 )
 		{
-			riecoin_primeTestTable[riecoin_primeTestSize] = n;
+			riecoin_primeTestTable[riecoin_primeTestSizeUpper] = n;
 			riecoin_primeTestSizeUpper++;
 			if(n<riecoin_primeTestLimitLower)
 			{
@@ -52,10 +51,11 @@ void riecoin_init(riecoinOptions_t *ropts)
 		}
 	}
 	upperLimitStepping = (riecoin_primeTestSizeUpper - riecoin_primeTestSize) / upperSteps;
-	riecoin_primeTestTable = (uint32*)realloc(riecoin_primeTestTable, sizeof(uint32)*riecoin_primeTestSize);
+	riecoin_primeTestTable = (uint32*)realloc(riecoin_primeTestTable, sizeof(uint32)*riecoin_primeTestSizeUpper);
 	free(vfComposite);
-	printf("Table with %d entries generated\n", riecoin_primeTestSize);
-	// make sure sieve size is divisible by 8
+	printf("Table with %d entries generated\n", riecoin_primeTestSizeUpper);
+
+// make sure sieve size is divisible by 8
 	riecoin_sieveSize = (riecoin_sieveSize&~7);
 	// generate primorial for 40
 	mpz_init_set_ui(z_skipPrimorial, riecoin_primeTestTable[0]);
@@ -241,9 +241,9 @@ void riecoin_process(minerRiecoinBlock_t* block)
 	if (riecoin_stepMethod)
 	{
 		f = 6 - upperSteps;
-		for(uint32 i=5; i<riecoin_primeTestSizeUpper && i < (riecoin_primeTestSize + (f-upperSteps) * upperLimitStepping); i++)
+		for(uint32 i=5; i<riecoin_primeTestSizeUpper && i < (riecoin_primeTestSize + (f - (6 - upperSteps) + 1) * upperLimitStepping); i++)
 		{
-			for(f=upperSteps; f<6; f++)
+			for(f=6 - upperSteps; f<6; f++)
 			{
 				uint32 p = riecoin_primeTestTable[i];
 				uint32 remainder = mpz_tdiv_ui(z_temp, p);//;
@@ -269,7 +269,7 @@ void riecoin_process(minerRiecoinBlock_t* block)
 		f = 6 - upperSteps;
 		for(uint32 i=5; i<riecoin_primeTestSizeUpper ; i++)
 		{
-			for(f=upperSteps; f<6; f++)
+			for(f = 6 - upperSteps; f<6; f++)
 			{
 				uint32 p = riecoin_primeTestTable[i];
 				uint32 remainder = mpz_tdiv_ui(z_temp, p);//;
