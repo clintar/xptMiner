@@ -871,7 +871,7 @@ void xptMiner_parseCommandline(int argc, char **argv)
 		}
 		else if( memcmp(argument, "-rm", 3)==0 )
 		{
-			riecoinOptions.ricStepMethod = true;
+			riecoinOptions.ricStepMethod = false;
 		}
 		else if( memcmp(argument, "-d", 3)==0 )
 		{

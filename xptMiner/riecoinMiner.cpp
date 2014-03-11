@@ -44,7 +44,7 @@ void riecoin_init(riecoinOptions_t *ropts)
 		if ( (vfComposite[n>>3] & (1<<(n&7)))==0 )
 		{
 			riecoin_primeTestTable[riecoin_primeTestSize] = n;
-			riecoin_primeTestSizeUpper;
+			riecoin_primeTestSizeUpper++;
 			if(n<riecoin_primeTestLimitLower)
 			{
 				riecoin_primeTestSize++;
