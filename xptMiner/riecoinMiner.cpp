@@ -16,7 +16,7 @@ uint32 riecoin_primeTestSize;
 uint32 riecoin_primeTestSizeUpper;
 bool riecoin_stepMethod = false;
 
-uint32 riecoin_sieveSize = (1024 + 256)*1024*1; // must be divisible by 8
+uint32 riecoin_sieveSize = (1024)*1024*1; // must be divisible by 8
 mpz_t  z_skipPrimorial;
 unsigned int int_invert(unsigned int a, unsigned int nPrime)
 {
@@ -235,11 +235,9 @@ void riecoin_process(minerRiecoinBlock_t* block)
 			//sint32 b = 2310;
 			index = (pa%p)*riecoin_primeTestTableInv[i];
 			index %= p;
-			while(index < riecoin_sieveSize)
-			{
-				sieve[(index)>>3] |= (1<<((index)&7));
-				index += p;
-			}
+			for(uint32 i = index;i < riecoin_sieveSize;i += p)
+				sieve[(i)>>3] |= (1<<((i)&7));
+
 		}
 		 
 	}
@@ -260,12 +258,9 @@ void riecoin_process(minerRiecoinBlock_t* block)
 				//sint32 b = 2310;
 				index = (pa%p)*riecoin_primeTestTableInv[i];
 				index %= p;
-				while(index < riecoin_sieveSize)
-				{
-					sieve[(index)>>3] |= (1<<((index)&7));
-					index += p;
+				for(uint32 i = index;i < riecoin_sieveSize;i += p)
+					sieve[(i)>>3] |= (1<<((i)&7));
 				}
-			}
 
 		}
 	}
@@ -286,12 +281,9 @@ void riecoin_process(minerRiecoinBlock_t* block)
 				//sint32 b = 2310;
 				index = (pa%p)*riecoin_primeTestTableInv[i];
 				index %= p;
-				while(index < riecoin_sieveSize)
-				{
-					sieve[(index)>>3] |= (1<<((index)&7));
-					index += p;
+				for(uint32 i = index;i < riecoin_sieveSize;i += p)
+					sieve[(i)>>3] |= (1<<((i)&7));
 				}
-			}
 
 		}
 	}

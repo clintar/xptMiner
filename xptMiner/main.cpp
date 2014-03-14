@@ -830,9 +830,9 @@ void xptMiner_parseCommandline(int argc, char **argv)
 				exit(0);
 			}
 			riecoinOptions.ricPrimeTestsInitial = atoi(argv[cIdx]);
-			if( riecoinOptions.ricPrimeTestsInitial < 50000 || riecoinOptions.ricPrimeTestsInitial > 500000 )
+			if( riecoinOptions.ricPrimeTestsInitial < 50000 || riecoinOptions.ricPrimeTestsInitial > 1000000000 )
 			{
-				printf("-ri parameter out of range. Must be between 50000 and 500000");
+				printf("-ri parameter out of range. Must be between 50000 and 1000000000");
 				exit(0);
 			}
 			cIdx++;
@@ -846,9 +846,9 @@ void xptMiner_parseCommandline(int argc, char **argv)
 				exit(0);
 			}
 			riecoinOptions.ricPrimeTestsUpper = atoi(argv[cIdx]);
-			if( riecoinOptions.ricPrimeTestsUpper < 50000 || riecoinOptions.ricPrimeTestsUpper > 500000 )
+			if( riecoinOptions.ricPrimeTestsUpper < 50000 || riecoinOptions.ricPrimeTestsUpper > 1000000000 )
 			{
-				printf("-ru parameter out of range. Must be between 50000 and 500000");
+				printf("-ru parameter out of range. Must be between 50000 and 1000000000");
 				exit(0);
 			}
 			cIdx++;
@@ -948,8 +948,8 @@ sysctl(mib, 2, &numcpu, &len, NULL, 0);
 
 	commandlineInput.numThreads = numcpu;
 	commandlineInput.numThreads = std::min(std::max(commandlineInput.numThreads, 1), 4);
-	riecoinOptions.ricPrimeTestsInitial = 50000;
-	riecoinOptions.ricPrimeTestsUpper = 80000;
+	riecoinOptions.ricPrimeTestsInitial = 64000;
+	riecoinOptions.ricPrimeTestsUpper = 64000;
 	riecoinOptions.ricStepMethod = true;
 	riecoinOptions.ricUpperSteps = 2;
 	xptMiner_parseCommandline(argc, argv);
