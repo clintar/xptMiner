@@ -11,13 +11,55 @@ uint32 riecoin_primeTestLimitLower = 50000;
 uint32 upperLimitStepping = (riecoin_primeTestLimitUpper - riecoin_primeTestLimitLower) / upperSteps;
 uint32 riecoin_primorialSizeSkip = 35;
 uint32* riecoin_primeTestTable;
+uint32* riecoin_primeTestTableInv;
 uint32 riecoin_primeTestSize;
 uint32 riecoin_primeTestSizeUpper;
 bool riecoin_stepMethod = false;
 
 uint32 riecoin_sieveSize = 1024*1024*1; // must be divisible by 8
 mpz_t  z_skipPrimorial;
+unsigned int int_invert(unsigned int a, unsigned int nPrime)
+{
+	// Extended Euclidean algorithm to calculate the inverse of a in finite field defined by nPrime
+	int rem0 = nPrime, rem1 = a % nPrime, rem2;
+	int aux0 = 0, aux1 = 1, aux2;
+	int quotient, inverse;
 
+	while (1)
+	{
+		if (rem1 <= 1)
+		{
+			inverse = aux1;
+			break;
+		}
+
+		rem2 = rem0 % rem1;
+		quotient = rem0 / rem1;
+		aux2 = -quotient * aux1 + aux0;
+
+		if (rem2 <= 1)
+		{
+			inverse = aux2;
+			break;
+		}
+
+		rem0 = rem1 % rem2;
+		quotient = rem1 / rem2;
+		aux0 = -quotient * aux2 + aux1;
+
+		if (rem0 <= 1)
+		{
+			inverse = aux0;
+			break;
+		}
+
+		rem1 = rem2 % rem0;
+		quotient = rem2 / rem0;
+		aux1 = -quotient * aux0 + aux2;
+	}
+
+	return (inverse + nPrime) % nPrime;
+}
 void riecoin_init(riecoinOptions_t *ropts)
 {
 	riecoin_primeTestLimitUpper = ropts->ricPrimeTestsUpper;
@@ -27,6 +69,7 @@ void riecoin_init(riecoinOptions_t *ropts)
         printf("Generating table of small primes for Riecoin...\n");
 	// generate prime table
 	riecoin_primeTestTable = (uint32*)malloc(sizeof(uint32)*(riecoin_primeTestLimitUpper/4+10));
+	riecoin_primeTestTableInv = (uint32*)malloc(sizeof(uint32)*(riecoin_primeTestLimitUpper/4+10));
 	riecoin_primeTestSize = 0;
 	// generate prime table using Sieve of Eratosthenes
 	uint8* vfComposite = (uint8*)malloc(sizeof(uint8)*(riecoin_primeTestLimitUpper+7)/8);
@@ -38,11 +81,13 @@ void riecoin_init(riecoinOptions_t *ropts)
 		for (unsigned int nComposite = nFactor * nFactor; nComposite < riecoin_primeTestLimitUpper; nComposite += nFactor)
 			vfComposite[nComposite>>3] |= 1<<(nComposite&7);
 	}
+	sint32 b = 2310;
 	for (unsigned int n = 2; n < riecoin_primeTestLimitUpper; n++)
 	{
 		if ( (vfComposite[n>>3] & (1<<(n&7)))==0 )
 		{
 			riecoin_primeTestTable[riecoin_primeTestSizeUpper] = n;
+			riecoin_primeTestTableInv[riecoin_primeTestSizeUpper] = int_invert(b, n);
 			riecoin_primeTestSizeUpper++;
 			if(n<riecoin_primeTestLimitLower)
 			{
@@ -52,6 +97,7 @@ void riecoin_init(riecoinOptions_t *ropts)
 	}
 	upperLimitStepping = (riecoin_primeTestSizeUpper - riecoin_primeTestSize) / upperSteps;
 	riecoin_primeTestTable = (uint32*)realloc(riecoin_primeTestTable, sizeof(uint32)*riecoin_primeTestSizeUpper);
+	riecoin_primeTestTableInv = (uint32*)realloc(riecoin_primeTestTableInv, sizeof(uint32)*riecoin_primeTestSizeUpper);
 	free(vfComposite);
 	printf("Table with %d entries generated\n", riecoin_primeTestSizeUpper);
 
@@ -111,48 +157,7 @@ void debug_parseHexStringLE(char* hexString, uint32 length, uint8* output)
 	}
 }
 
-unsigned int int_invert(unsigned int a, unsigned int nPrime)
-{
-	// Extended Euclidean algorithm to calculate the inverse of a in finite field defined by nPrime
-	int rem0 = nPrime, rem1 = a % nPrime, rem2;
-	int aux0 = 0, aux1 = 1, aux2;
-	int quotient, inverse;
 
-	while (1)
-	{
-		if (rem1 <= 1)
-		{
-			inverse = aux1;
-			break;
-		}
-
-		rem2 = rem0 % rem1;
-		quotient = rem0 / rem1;
-		aux2 = -quotient * aux1 + aux0;
-
-		if (rem2 <= 1)
-		{
-			inverse = aux2;
-			break;
-		}
-
-		rem0 = rem1 % rem2;
-		quotient = rem1 / rem2;
-		aux0 = -quotient * aux2 + aux1;
-
-		if (rem0 <= 1)
-		{
-			inverse = aux0;
-			break;
-		}
-
-		rem1 = rem2 % rem0;
-		quotient = rem2 / rem0;
-		aux1 = -quotient * aux0 + aux2;
-	}
-
-	return (inverse + nPrime) % nPrime;
-}
 
 void riecoin_process(minerRiecoinBlock_t* block)
 {
@@ -227,8 +232,8 @@ void riecoin_process(minerRiecoinBlock_t* block)
 			uint32 index;
 			// a+b*x=0 (mod p) => b*x=p-a => x = (p-a)*modinv(b)
 			sint32 pa = (p<remainder)?(p-remainder+p):(p-remainder);
-			sint32 b = 2310;
-			index = (pa%p)*int_invert(b, p);
+			//sint32 b = 2310;
+			index = (pa%p)*riecoin_primeTestTableInv[i];
 			index %= p;
 			while(index < riecoin_sieveSize)
 			{
@@ -252,8 +257,8 @@ void riecoin_process(minerRiecoinBlock_t* block)
 				uint32 index;
 				// a+b*x=0 (mod p) => b*x=p-a => x = (p-a)*modinv(b)
 				sint32 pa = (p<remainder)?(p-remainder+p):(p-remainder);
-				sint32 b = 2310;
-				index = (pa%p)*int_invert(b, p);
+				//sint32 b = 2310;
+				index = (pa%p)*riecoin_primeTestTableInv[i];
 				index %= p;
 				while(index < riecoin_sieveSize)
 				{
@@ -278,8 +283,8 @@ void riecoin_process(minerRiecoinBlock_t* block)
 				uint32 index;
 				// a+b*x=0 (mod p) => b*x=p-a => x = (p-a)*modinv(b)
 				sint32 pa = (p<remainder)?(p-remainder+p):(p-remainder);
-				sint32 b = 2310;
-				index = (pa%p)*int_invert(b, p);
+				//sint32 b = 2310;
+				index = (pa%p)*riecoin_primeTestTableInv[i];
 				index %= p;
 				while(index < riecoin_sieveSize)
 				{
