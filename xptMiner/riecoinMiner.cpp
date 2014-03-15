@@ -221,13 +221,15 @@ void riecoin_process(minerRiecoinBlock_t* block)
 
 	static uint32 primeTupleBias[6] = {0,4,6,10,12,16};
 	uint32 f=0;
+	uint32 p;
+	uint32 remainder;
 	for(uint32 i=5; i<riecoin_primeTestSize ; i++)
 	{
-		uint32 p = riecoin_primeTestTable[i];
-		uint32 remainder = mpz_tdiv_ui(z_temp, p);//;
+		p = riecoin_primeTestTable[i];
+		uint32 remainder2 = mpz_tdiv_ui(z_temp, p);//;
 		for(f=0; f< 6 - upperSteps; f++)
 		{
-
+			remainder = remainder2;
 			remainder += primeTupleBias[f];
 			remainder %= p;
 			uint32 index;
@@ -247,11 +249,11 @@ void riecoin_process(minerRiecoinBlock_t* block)
 		f = 6 - upperSteps;
 		for(uint32 i=5; i<riecoin_primeTestSizeUpper && i < (riecoin_primeTestSize + (f - (6 - upperSteps) + 1) * upperLimitStepping); i++)
 		{
-			uint32 p = riecoin_primeTestTable[i];
-			uint32 remainder = mpz_tdiv_ui(z_temp, p);//;
-			for(f=6 - upperSteps; f<6; f++)
+			p = riecoin_primeTestTable[i];
+			uint32 remainder2 = mpz_tdiv_ui(z_temp, p);//;
+			for(f=0; f< 6 - upperSteps; f++)
 			{
-
+				remainder = remainder2;
 				remainder += primeTupleBias[f];
 				remainder %= p;
 				uint32 index;
@@ -271,11 +273,11 @@ void riecoin_process(minerRiecoinBlock_t* block)
 		f = 6 - upperSteps;
 		for(uint32 i=5; i<riecoin_primeTestSizeUpper ; i++)
 		{
-			uint32 p = riecoin_primeTestTable[i];
-			uint32 remainder = mpz_tdiv_ui(z_temp, p);//;
-			for(f = 6 - upperSteps; f<6; f++)
+			p = riecoin_primeTestTable[i];
+			uint32 remainder2 = mpz_tdiv_ui(z_temp, p);//;
+			for(f=0; f< 6 - upperSteps; f++)
 			{
-
+				remainder = remainder2;
 				remainder += primeTupleBias[f];
 				remainder %= p;
 				uint32 index;
