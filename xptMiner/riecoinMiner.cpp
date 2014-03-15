@@ -1,13 +1,13 @@
 #include"global.h"
-
+#include <emmintrin.h>
 #define zeroesBeforeHashInPrime	8
 
 
 
 uint32 upperSteps = 2;
 
-uint32 riecoin_primeTestLimitUpper = 64000;
-uint32 riecoin_primeTestLimitLower = 64000;
+uint32 riecoin_primeTestLimitUpper = 96000;
+uint32 riecoin_primeTestLimitLower = 96000;
 uint32 upperLimitStepping = (riecoin_primeTestLimitUpper - riecoin_primeTestLimitLower) / upperSteps;
 uint32 riecoin_primorialSizeSkip = 35;
 uint32* riecoin_primeTestTable;
@@ -15,8 +15,9 @@ uint32* riecoin_primeTestTableInv;
 uint32 riecoin_primeTestSize;
 uint32 riecoin_primeTestSizeUpper;
 bool riecoin_stepMethod = false;
+const uint32 riecoin_Primorial = 510510;
 
-uint32 riecoin_sieveSize = (1024)*1024*1; // must be divisible by 8
+uint32 riecoin_sieveSize = (1024 + 384)*1024 * 1; // must be divisible by 8
 mpz_t  z_skipPrimorial;
 unsigned int int_invert(unsigned int a, unsigned int nPrime)
 {
@@ -81,7 +82,7 @@ void riecoin_init(riecoinOptions_t *ropts)
 		for (unsigned int nComposite = nFactor * nFactor; nComposite < riecoin_primeTestLimitUpper; nComposite += nFactor)
 			vfComposite[nComposite>>3] |= 1<<(nComposite&7);
 	}
-	sint32 b = 2310;
+	sint32 b = riecoin_Primorial;
 	for (unsigned int n = 2; n < riecoin_primeTestLimitUpper; n++)
 	{
 		if ( (vfComposite[n>>3] & (1<<(n&7)))==0 )
@@ -204,11 +205,11 @@ void riecoin_process(minerRiecoinBlock_t* block)
 	}
 	unsigned int trailingZeros = searchBits - 1 - zeroesBeforeHashInPrime - 256;
 	mpz_mul_2exp(z_target, z_target, trailingZeros);
-	// find first offset where x%2310 = 97
-	uint64 remainder2310 = mpz_tdiv_ui(z_target, 2310);
-	remainder2310 = (2310-remainder2310)%2310;
-	remainder2310 += 97;
-	mpz_add_ui(z_temp, z_target, remainder2310);
+	// find first offset where x%riecoin_Primorial = 97
+	uint64 remainderPrimorial = mpz_tdiv_ui(z_target, riecoin_Primorial);
+	remainderPrimorial = (riecoin_Primorial-remainderPrimorial)%riecoin_Primorial;
+	remainderPrimorial += 97;
+	mpz_add_ui(z_temp, z_target, remainderPrimorial);
 
 	mpz_t z_temp2;
 	mpz_init(z_temp2);
@@ -223,20 +224,22 @@ void riecoin_process(minerRiecoinBlock_t* block)
 	uint32 f=0;
 	uint32 p;
 	uint32 remainder;
-	for(uint32 i=5; i<riecoin_primeTestSize ; i++)
+	for(uint32 i=7; i<riecoin_primeTestSize ; i++)
 	{
 		p = riecoin_primeTestTable[i];
 		uint32 remainder2 = mpz_tdiv_ui(z_temp, p);//;
+		uint32 pinv = riecoin_primeTestTableInv[i];
+		uint32 index;
 		for(f=0; f< 6 - upperSteps; f++)
 		{
 			remainder = remainder2;
 			remainder += primeTupleBias[f];
 			remainder %= p;
-			uint32 index;
+			
 			// a+b*x=0 (mod p) => b*x=p-a => x = (p-a)*modinv(b)
 			sint32 pa = (p<remainder)?(p-remainder+p):(p-remainder);
-			//sint32 b = 2310;
-			index = (pa%p)*riecoin_primeTestTableInv[i];
+			//sint32 b = riecoin_Primorial;
+			index = (pa%p)*pinv;
 			index %= p;
 			for(uint32 i = index;i < riecoin_sieveSize;i += p)
 				sieve[(i)>>3] |= (1<<((i)&7));
@@ -247,20 +250,22 @@ void riecoin_process(minerRiecoinBlock_t* block)
 	if (riecoin_stepMethod)
 	{
 		f = 6 - upperSteps;
-		for(uint32 i=5; i<riecoin_primeTestSizeUpper && i < (riecoin_primeTestSize + (f - (6 - upperSteps) + 1) * upperLimitStepping); i++)
+		for(uint32 i=7; i<riecoin_primeTestSizeUpper && i < (riecoin_primeTestSize + (f - (6 - upperSteps) + 1) * upperLimitStepping); i++)
 		{
 			p = riecoin_primeTestTable[i];
 			uint32 remainder2 = mpz_tdiv_ui(z_temp, p);//;
-			for(f=0; f< 6 - upperSteps; f++)
+			uint32 pinv = riecoin_primeTestTableInv[i];
+			uint32 index;
+			for(; f< 6 - upperSteps; f++)
 			{
 				remainder = remainder2;
 				remainder += primeTupleBias[f];
 				remainder %= p;
-				uint32 index;
+				
 				// a+b*x=0 (mod p) => b*x=p-a => x = (p-a)*modinv(b)
 				sint32 pa = (p<remainder)?(p-remainder+p):(p-remainder);
-				//sint32 b = 2310;
-				index = (pa%p)*riecoin_primeTestTableInv[i];
+				//sint32 b = riecoin_Primorial;
+				index = (pa%p)*pinv;
 				index %= p;
 				for(uint32 i = index;i < riecoin_sieveSize;i += p)
 					sieve[(i)>>3] |= (1<<((i)&7));
@@ -271,20 +276,22 @@ void riecoin_process(minerRiecoinBlock_t* block)
 	else
 	{
 		f = 6 - upperSteps;
-		for(uint32 i=5; i<riecoin_primeTestSizeUpper ; i++)
+		for(uint32 i=7; i<riecoin_primeTestSizeUpper ; i++)
 		{
 			p = riecoin_primeTestTable[i];
 			uint32 remainder2 = mpz_tdiv_ui(z_temp, p);//;
-			for(f=0; f< 6 - upperSteps; f++)
+			uint32 pinv = riecoin_primeTestTableInv[i];
+			uint32 index;
+			for(; f< 6 - upperSteps; f++)
 			{
 				remainder = remainder2;
 				remainder += primeTupleBias[f];
 				remainder %= p;
-				uint32 index;
+				
 				// a+b*x=0 (mod p) => b*x=p-a => x = (p-a)*modinv(b)
 				sint32 pa = (p<remainder)?(p-remainder+p):(p-remainder);
-				//sint32 b = 2310;
-				index = (pa%p)*riecoin_primeTestTableInv[i];
+				//sint32 b = riecoin_Primorial;
+				index = (pa%p)*pinv;
 				index %= p;
 				for(uint32 i = index;i < riecoin_sieveSize;i += p)
 					sieve[(i)>>3] |= (1<<((i)&7));
@@ -304,7 +311,7 @@ void riecoin_process(minerRiecoinBlock_t* block)
 		// test the first 4 numbers for being prime (5th and 6th is checked server side)
 		// we use fermat test as it is slightly faster for virtually the same accuracy
 		// p1
-		mpz_add_ui(z_temp, z_target, (uint64)remainder2310 + 2310ULL*(uint64)i);
+		mpz_add_ui(z_temp, z_target, (uint64)remainderPrimorial + (uint64)riecoin_Primorial*(uint64)i);
 		mpz_sub_ui(z_ft_n, z_temp, 1);
 		mpz_powm(z_ft_r, z_ft_b, z_ft_n, z_temp);
 		if (mpz_cmp_ui(z_ft_r, 1) != 0)
@@ -331,7 +338,7 @@ void riecoin_process(minerRiecoinBlock_t* block)
 			continue;
 		total4ChainCount++;
 		// calculate offset
-		mpz_add_ui(z_temp, z_target, (uint64)remainder2310 + 2310ULL*(uint64)i);
+		mpz_add_ui(z_temp, z_target, (uint64)remainderPrimorial + (uint64)riecoin_Primorial*(uint64)i);
 		mpz_sub(z_temp2, z_temp, z_target);
 		// submit share
 		uint8 nOffset[32];

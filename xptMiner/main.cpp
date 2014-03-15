@@ -862,7 +862,7 @@ void xptMiner_parseCommandline(int argc, char **argv)
 				exit(0);
 			}
 			riecoinOptions.ricUpperSteps = atoi(argv[cIdx]);
-			if( riecoinOptions.ricUpperSteps < 1 || riecoinOptions.ricUpperSteps > 4 )
+			if( riecoinOptions.ricUpperSteps < 1 || riecoinOptions.ricUpperSteps > 5 )
 			{
 				printf("-t parameter out of range");
 				exit(0);
@@ -871,7 +871,7 @@ void xptMiner_parseCommandline(int argc, char **argv)
 		}
 		else if( memcmp(argument, "-rm", 3)==0 )
 		{
-			riecoinOptions.ricStepMethod = false;
+			riecoinOptions.ricStepMethod = true;
 		}
 		else if( memcmp(argument, "-d", 3)==0 )
 		{
