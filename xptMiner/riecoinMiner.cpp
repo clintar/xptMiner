@@ -17,7 +17,7 @@ uint32 riecoin_primeTestSizeUpper;
 bool riecoin_stepMethod = false;
 const uint32 riecoin_Primorial = 510510;
 
-uint32 riecoin_sieveSize = (1024 + 384)*1024 * 1; // must be divisible by 8
+uint32 riecoin_sieveSize = (1024)*1024 * 1; // must be divisible by 8
 mpz_t  z_skipPrimorial;
 unsigned int int_invert(unsigned int a, unsigned int nPrime)
 {
