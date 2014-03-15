@@ -6,8 +6,8 @@
 
 uint32 upperSteps = 2;
 
-uint32 riecoin_primeTestLimitUpper = 120000;
-uint32 riecoin_primeTestLimitLower = 50000;
+uint32 riecoin_primeTestLimitUpper = 64000;
+uint32 riecoin_primeTestLimitLower = 64000;
 uint32 upperLimitStepping = (riecoin_primeTestLimitUpper - riecoin_primeTestLimitLower) / upperSteps;
 uint32 riecoin_primorialSizeSkip = 35;
 uint32* riecoin_primeTestTable;
@@ -225,8 +225,8 @@ void riecoin_process(minerRiecoinBlock_t* block)
 	{
 		for(f=0; f< 6 - upperSteps; f++)
 		{
-			uint32 p = riecoin_primeTestTable[i];
-			uint32 remainder = mpz_tdiv_ui(z_temp, p);//;
+		uint32 p = riecoin_primeTestTable[i];
+		uint32 remainder = mpz_tdiv_ui(z_temp, p);//;
 			remainder += primeTupleBias[f];
 			remainder %= p;
 			uint32 index;
@@ -239,7 +239,7 @@ void riecoin_process(minerRiecoinBlock_t* block)
 				sieve[(i)>>3] |= (1<<((i)&7));
 
 		}
-		 
+
 	}
 	if (riecoin_stepMethod)
 	{
@@ -248,8 +248,8 @@ void riecoin_process(minerRiecoinBlock_t* block)
 		{
 			for(f=6 - upperSteps; f<6; f++)
 			{
-				uint32 p = riecoin_primeTestTable[i];
-				uint32 remainder = mpz_tdiv_ui(z_temp, p);//;
+			uint32 p = riecoin_primeTestTable[i];
+			uint32 remainder = mpz_tdiv_ui(z_temp, p);//;
 				remainder += primeTupleBias[f];
 				remainder %= p;
 				uint32 index;
@@ -260,7 +260,7 @@ void riecoin_process(minerRiecoinBlock_t* block)
 				index %= p;
 				for(uint32 i = index;i < riecoin_sieveSize;i += p)
 					sieve[(i)>>3] |= (1<<((i)&7));
-				}
+			}
 
 		}
 	}
@@ -271,8 +271,8 @@ void riecoin_process(minerRiecoinBlock_t* block)
 		{
 			for(f = 6 - upperSteps; f<6; f++)
 			{
-				uint32 p = riecoin_primeTestTable[i];
-				uint32 remainder = mpz_tdiv_ui(z_temp, p);//;
+			uint32 p = riecoin_primeTestTable[i];
+			uint32 remainder = mpz_tdiv_ui(z_temp, p);//;
 				remainder += primeTupleBias[f];
 				remainder %= p;
 				uint32 index;
@@ -283,7 +283,7 @@ void riecoin_process(minerRiecoinBlock_t* block)
 				index %= p;
 				for(uint32 i = index;i < riecoin_sieveSize;i += p)
 					sieve[(i)>>3] |= (1<<((i)&7));
-				}
+			}
 
 		}
 	}
